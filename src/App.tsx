@@ -111,6 +111,16 @@ function App() {
   });
 
   const topSubject = [...subjectRows].sort((a, b) => b.weeklyHours - a.weeklyHours)[0];
+  const recoverySubject = [...subjectRows]
+    .filter((subject) => subject.weeklyHours < subject.weeklyTarget)
+    .sort(
+      (left, right) =>
+        left.weeklyHours / Math.max(left.weeklyTarget, 1) -
+        right.weeklyHours / Math.max(right.weeklyTarget, 1)
+    )[0];
+  const strongestDay = [...weeklyBars].sort((a, b) => b.hours - a.hours)[0];
+  const goalRemainder = Math.max(tracker.weeklyGoal - totalWeekHours, 0);
+  const completedTargets = subjectRows.filter((subject) => subject.progress >= 100).length;
 
   function handleAddSession(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -238,6 +248,11 @@ function App() {
               Reset Tracker
             </button>
           </div>
+          <div className="hero-meta">
+            <span>Built with React + TypeScript</span>
+            <span>{tracker.subjects.length} active subjects</span>
+            <span>{tracker.sessions.length} total study sessions</span>
+          </div>
         </div>
 
         <div className="hero-side">
@@ -258,6 +273,32 @@ function App() {
           </article>
         </div>
       </header>
+
+      <section className="insight-strip">
+        <article className="insight-card primary">
+          <span className="insight-label">Momentum</span>
+          <strong>{strongestDay?.hours ? `${strongestDay.label} is your best day` : "No strongest day yet"}</strong>
+          <p>
+            {strongestDay?.hours
+              ? `${formatHours(strongestDay.hours)} logged on your strongest day in the last week.`
+              : "Load demo data or log sessions to reveal your weekly peak."}
+          </p>
+        </article>
+        <article className="insight-card">
+          <span className="insight-label">Next focus</span>
+          <strong>{recoverySubject ? recoverySubject.name : "You are on pace"}</strong>
+          <p>
+            {recoverySubject
+              ? `${formatHours(Math.max(recoverySubject.weeklyTarget - recoverySubject.weeklyHours, 0))} still needed to hit this week's target.`
+              : "Every tracked subject is currently meeting its weekly goal."}
+          </p>
+        </article>
+        <article className="insight-card">
+          <span className="insight-label">Goal status</span>
+          <strong>{goalRemainder ? `${formatHours(goalRemainder)} remaining` : "Weekly goal reached"}</strong>
+          <p>{completedTargets} of {tracker.subjects.length} subjects have already hit their weekly target.</p>
+        </article>
+      </section>
 
       <main className="dashboard-grid">
         <section className="left-column">
@@ -366,7 +407,7 @@ function App() {
                       <span className="subject-dot" style={{ backgroundColor: subject.color }} />
                       <strong>{subject.name}</strong>
                     </div>
-                    <span>{formatHours(subject.weeklyHours)} this week</span>
+                    <span className="subject-weekly">{formatHours(subject.weeklyHours)} this week</span>
                   </div>
                   <div className="progress-track">
                     <div
@@ -375,7 +416,15 @@ function App() {
                         width: `${Math.max(subject.progress, 4)}%`,
                         background: `linear-gradient(90deg, ${subject.color}, ${subject.color}aa)`,
                       }}
-                    />
+                      />
+                  </div>
+                  <div className="subject-kpis">
+                    <span className="subject-badge" style={{ color: subject.color }}>
+                      {Math.round(subject.progress)}% to target
+                    </span>
+                    <span className="subject-badge neutral">
+                      {formatHours(subject.weeklyTarget)} weekly target
+                    </span>
                   </div>
                   <div className="subject-meta">
                     <span>{formatHours(subject.monthlyHours)} this month</span>
@@ -423,6 +472,7 @@ function App() {
                 <p className="panel-label">Weekly trend</p>
                 <h2>Last 7 days</h2>
               </div>
+              <span className="panel-note">{topSubject ? `${topSubject.name} is leading` : "Track sessions to unlock trends"}</span>
             </div>
 
             <div className="bar-chart">
@@ -447,6 +497,7 @@ function App() {
                 <p className="panel-label">Consistency</p>
                 <h2>Study heatmap</h2>
               </div>
+              <span className="panel-note">Last 30 days</span>
             </div>
 
             <div className="heatmap-grid">
@@ -465,6 +516,16 @@ function App() {
                 </div>
               ))}
             </div>
+            <div className="heatmap-legend">
+              <span>Less</span>
+              <div className="legend-scale">
+                <span />
+                <span />
+                <span />
+                <span />
+              </div>
+              <span>More</span>
+            </div>
           </section>
 
           <section className="panel">
@@ -481,15 +542,22 @@ function App() {
                   const subject = tracker.subjects.find((item) => item.id === session.subjectId);
                   return (
                     <article className="session-row" key={session.id}>
-                      <div>
+                      <div className="session-main">
+                        <div className="session-badge-row">
+                          <span
+                            className="session-subject-badge"
+                            style={{ backgroundColor: `${subject?.color ?? "#2563eb"}22`, color: subject?.color ?? "#2563eb" }}
+                          >
+                            {subject?.name ?? "Unknown subject"}
+                          </span>
+                          <span className="session-focus-pill">Focus {session.focus}/5</span>
+                        </div>
                         <strong>{subject?.name ?? "Unknown subject"}</strong>
                         <p>{session.memo || "Focused study block logged."}</p>
                       </div>
                       <div className="session-side">
                         <span>{formatHours(session.duration / 60)}</span>
-                        <small>
-                          {session.date} • focus {session.focus}/5
-                        </small>
+                        <small>{session.date}</small>
                       </div>
                     </article>
                   );
