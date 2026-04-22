@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import heroImage from "./assets/hero.png";
 import "./App.css";
 
 type Subject = {
@@ -24,13 +25,13 @@ type TrackerState = {
 };
 
 const STORAGE_KEY = "studytracker.v1";
-const subjectPalette = ["#2563eb", "#10b981", "#f97316", "#8b5cf6", "#ec4899", "#14b8a6"];
+const subjectPalette = ["#2e6cf8", "#12b886", "#f08c00", "#e8590c", "#0ea5e9", "#65a30d"];
 
 const defaultSubjects: Subject[] = [
-  { id: "algorithms", name: "Algorithms", color: "#2563eb", weeklyTarget: 6 },
-  { id: "web-dev", name: "Web Dev", color: "#10b981", weeklyTarget: 5 },
-  { id: "system-design", name: "System Design", color: "#f97316", weeklyTarget: 4 },
-  { id: "databases", name: "Databases", color: "#8b5cf6", weeklyTarget: 3 },
+  { id: "algorithms", name: "Algorithms", color: "#2e6cf8", weeklyTarget: 6 },
+  { id: "web-dev", name: "Web Dev", color: "#12b886", weeklyTarget: 5 },
+  { id: "system-design", name: "System Design", color: "#f08c00", weeklyTarget: 4 },
+  { id: "databases", name: "Databases", color: "#0ea5e9", weeklyTarget: 3 },
 ];
 
 const defaultState: TrackerState = {
@@ -53,12 +54,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tracker));
   }, [tracker]);
-
-  useEffect(() => {
-    if (!tracker.subjects.some((subject) => subject.id === subjectId)) {
-      setSubjectId(tracker.subjects[0]?.id ?? "");
-    }
-  }, [subjectId, tracker.subjects]);
 
   const sortedSessions = useMemo(
     () =>
@@ -121,14 +116,17 @@ function App() {
   const strongestDay = [...weeklyBars].sort((a, b) => b.hours - a.hours)[0];
   const goalRemainder = Math.max(tracker.weeklyGoal - totalWeekHours, 0);
   const completedTargets = subjectRows.filter((subject) => subject.progress >= 100).length;
+  const activeSubjectId = tracker.subjects.some((subject) => subject.id === subjectId)
+    ? subjectId
+    : tracker.subjects[0]?.id ?? "";
 
   function handleAddSession(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!subjectId) return;
+    if (!activeSubjectId) return;
 
     const session: Session = {
       id: crypto.randomUUID(),
-      subjectId,
+      subjectId: activeSubjectId,
       date,
       duration: Number(duration),
       focus: Number(focus),
@@ -234,8 +232,8 @@ function App() {
           <p className="eyebrow">Study analytics dashboard</p>
           <h1>StudyTracker</h1>
           <p className="hero-text">
-            Log study sessions, track weekly goals, monitor streaks, and visualize subject progress
-            with a dashboard designed to feel like a real productivity product.
+            Plan your week, log each deep-work block, and watch your consistency improve with a
+            clean dashboard built for deliberate study.
           </p>
           <div className="hero-actions">
             <button className="btn btn-primary" onClick={handleLoadDemo}>
@@ -249,28 +247,40 @@ function App() {
             </button>
           </div>
           <div className="hero-meta">
-            <span>Built with React + TypeScript</span>
-            <span>{tracker.subjects.length} active subjects</span>
-            <span>{tracker.sessions.length} total study sessions</span>
+            <span className="meta-chip">React + TypeScript</span>
+            <span className="meta-chip">{tracker.subjects.length} active subjects</span>
+            <span className="meta-chip">{tracker.sessions.length} total study sessions</span>
           </div>
         </div>
 
         <div className="hero-side">
-          <article className="hero-stat">
-            <span>This week</span>
-            <strong>{formatHours(totalWeekHours)}</strong>
-            <small>{Math.round(weeklyProgress)}% of weekly goal</small>
-          </article>
-          <article className="hero-stat accent">
-            <span>Current streak</span>
-            <strong>{streakDays} days</strong>
-            <small>{topSubject ? `${topSubject.name} leads this week` : "Start with your first session"}</small>
-          </article>
-          <article className="hero-stat">
-            <span>Average focus</span>
-            <strong>{averageFocus ? averageFocus.toFixed(1) : "0.0"} / 5</strong>
-            <small>{weeklySessions.length} study blocks logged</small>
-          </article>
+          <div className="hero-preview">
+            <img src={heroImage} alt="Study illustration" />
+            <div className="hero-preview-badge">
+              <small>Goal lock-in</small>
+              <strong>{tracker.weeklyGoal}h this week</strong>
+            </div>
+          </div>
+
+          <div className="hero-stats-grid">
+            <article className="hero-stat">
+              <span>This week</span>
+              <strong>{formatHours(totalWeekHours)}</strong>
+              <small>{Math.round(weeklyProgress)}% of weekly goal</small>
+            </article>
+            <article className="hero-stat">
+              <span>Average focus</span>
+              <strong>{averageFocus ? averageFocus.toFixed(1) : "0.0"} / 5</strong>
+              <small>{weeklySessions.length} study blocks logged</small>
+            </article>
+            <article className="hero-stat accent wide">
+              <span>Current streak</span>
+              <strong>{streakDays} days</strong>
+              <small>
+                {topSubject ? `${topSubject.name} leads this week` : "Start with your first session"}
+              </small>
+            </article>
+          </div>
         </div>
       </header>
 
@@ -314,7 +324,10 @@ function App() {
             <form className="session-form" onSubmit={handleAddSession}>
               <label>
                 <span>Subject</span>
-                <select value={subjectId} onChange={(event) => setSubjectId(event.target.value)}>
+                <select
+                  value={activeSubjectId}
+                  onChange={(event) => setSubjectId(event.target.value)}
+                >
                   {tracker.subjects.map((subject) => (
                     <option key={subject.id} value={subject.id}>
                       {subject.name}

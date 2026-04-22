@@ -1,17 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
+
 :root {
-  font-family: "Sora", "Segoe UI", sans-serif;
+  --text-main: #11203b;
+  --muted: #5f6f89;
+  --surface-strong: #ffffff;
+  --surface-card: rgba(255, 255, 255, 0.74);
+  --surface-soft: rgba(255, 255, 255, 0.58);
+  --border-soft: rgba(17, 32, 59, 0.14);
+  --accent-blue: #2e6cf8;
+  --accent-teal: #12b886;
+  --accent-orange: #f08c00;
+  --accent-red: #e8590c;
+  --shadow-lg: 0 30px 70px rgba(17, 32, 59, 0.16);
+  --shadow-md: 0 14px 34px rgba(17, 32, 59, 0.12);
+  font-family: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
   line-height: 1.5;
-  font-weight: 400;
-  color: #0f172a;
-  background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 26%),
-    radial-gradient(circle at top right, rgba(20, 184, 166, 0.16), transparent 28%),
-    linear-gradient(180deg, #eef4ff 0%, #f8fafc 46%, #eefbf8 100%);
+  font-weight: 500;
+  color: var(--text-main);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --muted: #64748b;
 }
 
 * {
@@ -22,16 +31,37 @@ html,
 body,
 #root {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 body {
   min-width: 320px;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 14% -8%, rgba(46, 108, 248, 0.26), transparent 33%),
+    radial-gradient(circle at 86% 2%, rgba(18, 184, 134, 0.2), transparent 28%),
+    radial-gradient(circle at 54% 118%, rgba(240, 140, 0, 0.16), transparent 36%),
+    linear-gradient(156deg, #e9f2ff 0%, #f4f8ff 46%, #f7fbff 100%);
+  background-attachment: fixed;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(17, 32, 59, 0.05) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+  opacity: 0.3;
 }
 
 #root {
-  width: min(1240px, calc(100% - 32px));
+  width: min(1260px, calc(100% - 2rem));
   margin: 0 auto;
+  padding-bottom: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 button,
