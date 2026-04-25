@@ -1,13 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>studytracker</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyTracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0b0e14;
+      --s1:      #111520;
+      --s2:      #171c2e;
+      --s3:      #1e253a;
+      --border:  rgba(249,115,22,0.1);
+      --border2: rgba(249,115,22,0.22);
+      --orange:  #f97316;
+      --teal:    #14b8a6;
+      --text:    #f0f4ff;
+      --text2:   #8899bb;
+      --muted:   #445066;
+      --red:     #f87171;
+      --green:   #4ade80;
+    }
+    html,body { height:100%; overflow:hidden; }
+    body {
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Space Grotesk',system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    #root { height:100vh; }
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:var(--s3);border-radius:4px; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:none} }
+    @keyframes barGrow { from{height:0} }
+    @keyframes heatPop { from{transform:scale(.3);opacity:0} to{transform:scale(1);opacity:1} }
+    .fade-up { animation:fadeUp .3s ease forwards; }
+    input,select,textarea,button { font-family:inherit; }
+    input[type=date],input[type=number] { color-scheme:dark; }
+    input:focus,select:focus,textarea:focus { outline:2px solid var(--orange);outline-offset:1px; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="studytracker/app.jsx"></script>
+</body>
 </html>
